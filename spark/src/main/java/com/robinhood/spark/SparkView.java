@@ -184,6 +184,11 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         scrubEnabled = a.getBoolean(R.styleable.SparkView_spark_scrubEnabled, true);
         scrubLineColor = a.getColor(R.styleable.SparkView_spark_scrubLineColor, baseLineColor);
         scrubLineWidth = a.getDimension(R.styleable.SparkView_spark_scrubLineWidth, lineWidth);
+
+        gradientColor1 = a.getColor(R.styleable.SparkView_spark_gradient1Color, 0);
+        gradientColor2 = a.getColor(R.styleable.SparkView_spark_gradient2Color, 0);
+        circleFillColor = a.getColor(R.styleable.SparkView_spark_circleFillColor, 0);
+        circleBorderColor = a.getColor(R.styleable.SparkView_spark_circleBorderColor, 0);
         boolean animateChanges = a.getBoolean(R.styleable.SparkView_spark_animateChanges, false);
         a.recycle();
 

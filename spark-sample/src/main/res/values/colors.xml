@@ -7,4 +7,7 @@
 
     <color name="spark_gradient1">#ce5378</color>
     <color name="spark_gradient2">#7a55ab</color>
+
+    <color name="spark_border">#c4494b</color>
+    <color name="spark_fill">#ffffff</color>
 </resources>

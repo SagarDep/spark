@@ -49,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RandomizedAdapter();
         sparkView.setAdapter(adapter);
-        sparkView.setShader(getColor(R.color.spark_gradient1), getColor(R.color.spark_gradient2));
-        sparkView.setCircle(Color.RED, Color.WHITE);
         sparkView.setLineWidth(20f);
         sparkView.setScrubListener(new SparkView.OnScrubListener() {
             @Override

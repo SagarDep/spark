@@ -26,5 +26,10 @@
         <attr name="spark_scrubEnabled" format="boolean|reference" />
 
         <attr name="spark_animateChanges" format="boolean|reference" />
+
+        <attr name="spark_circleBorderColor" format="color|reference" />
+        <attr name="spark_circleFillColor" format="color|reference" />
+        <attr name="spark_gradient1Color" format="color|reference" />
+        <attr name="spark_gradient2Color" format="color|reference" />
     </declare-styleable>
 </resources>

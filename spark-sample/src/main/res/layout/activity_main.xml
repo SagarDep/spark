@@ -16,6 +16,10 @@
         android:id="@+id/sparkview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
+        app:spark_circleBorderColor="@color/spark_border"
+        app:spark_circleFillColor="@color/spark_fill"
+        app:spark_gradient1Color="@color/spark_gradient1"
+        app:spark_gradient2Color="@color/spark_gradient2"
         app:spark_lineColor="@color/colorAccent"
         app:spark_fillColor="@color/colorAccentTransparent"
         app:spark_scrubEnabled="true"/>
