@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2016 Robinhood Markets, Inc.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,9 +23,11 @@ import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.CornerPathEffect;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.ColorInt;
@@ -87,17 +89,34 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     }
 
     // styleable values
-    @ColorInt private int lineColor;
-    @ColorInt private int fillColor;
+    @ColorInt
+    private int lineColor;
+
+    @ColorInt
+    private int gradientColor1;
+    @ColorInt
+    private int gradientColor2;
+
+    @ColorInt
+    private int fillColor;
     private float lineWidth;
     private float cornerRadius;
-    @FillType private int fillType = FillType.NONE;
-    @ColorInt private int baseLineColor;
+    @FillType
+    private int fillType = FillType.NONE;
+    @ColorInt
+    private int baseLineColor;
     private float baseLineWidth;
-    @ColorInt private int scrubLineColor;
+    @ColorInt
+    private int scrubLineColor;
     private float scrubLineWidth;
     private boolean scrubEnabled;
     private SparkAnimator sparkAnimator;
+
+    @ColorInt
+    private int circleBorderColor;
+
+    @ColorInt
+    private int circleFillColor;
 
     // the onDraw data
     private final Path renderPath = new Path();
@@ -172,6 +191,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         sparkLinePaint.setColor(lineColor);
         sparkLinePaint.setStrokeWidth(lineWidth);
         sparkLinePaint.setStrokeCap(Paint.Cap.ROUND);
+
         if (cornerRadius != 0) {
             sparkLinePaint.setPathEffect(new CornerPathEffect(cornerRadius));
         }
@@ -200,7 +220,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         yPoints = new ArrayList<>();
 
         // for backward support
-        if(animateChanges) {
+        if (animateChanges) {
             sparkAnimator = new LineSparkAnimator();
         }
     }
@@ -301,7 +321,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
      * (for instance {@link SparkAdapter} has not been set or has less than 2 points of data). This
      * method will return the unscaled value.
      *
-     * @param x    the value to scale (should be the same units as your graph's data points)
+     * @param x the value to scale (should be the same units as your graph's data points)
      * @return the pixel coordinates of where this point is located in SparkView's bounds
      */
     public float getScaledX(float x) {
@@ -317,7 +337,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
      * (for instance {@link SparkAdapter} has not been set or has less than 2 points of data). This
      * method will return the unscaled value.
      *
-     * @param y    the value to scale (should be the same units as your graph's data points)
+     * @param y the value to scale (should be the same units as your graph's data points)
      * @return the pixel coordinates of where this point is located in SparkView's bounds
      */
     public float getScaledY(float y) {
@@ -375,7 +395,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
     @Override
     public void setPadding(int left, int top, int right, int bottom) {
-        super.setPadding(left, top, right, bottom);
+        super.setPadding(left + 40, top, right + 40, bottom);
         updateContentRect();
         populatePath();
     }
@@ -383,20 +403,75 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        canvas.drawPath(baseLinePath, baseLinePaint);
 
-        if(fillType != FillType.NONE){
+        if (gradientColor2 != 0 && gradientColor1 != 0) {
+            setShader(canvas.getHeight());
+        }
+
+        if (fillType != FillType.NONE) {
             canvas.drawPath(renderPath, sparkFillPaint);
         }
 
         canvas.drawPath(renderPath, sparkLinePaint);
-        canvas.drawPath(scrubLinePath, scrubLinePaint);
+
+        if (circleBorderColor != 0 && circleFillColor != 0)
+            drawCircle(canvas, circleBorderColor, circleFillColor);
+
+
+        setPadding(24, 24, 24, 24);
+    }
+
+    private void drawCircle(Canvas c, int borderColor, int fillColor) {
+        Paint circlePaint = new Paint();
+        circlePaint.setStyle(Paint.Style.FILL);
+        circlePaint.setStrokeWidth(24f);
+        circlePaint.setColor(fillColor);
+
+        Paint borderPaint = new Paint();
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(12f);
+        borderPaint.setColor(borderColor);
+
+        c.drawCircle(xPoints.get(0), yPoints.get(0), 16f, circlePaint);
+        c.drawCircle(xPoints.get(xPoints.size() - 1), yPoints.get(yPoints.size() - 1), 16f, circlePaint);
+
+        c.drawCircle(xPoints.get(0), yPoints.get(0), 16f, borderPaint);
+        c.drawCircle(xPoints.get(xPoints.size() - 1), yPoints.get(yPoints.size() - 1), 16f, borderPaint);
+    }
+
+
+    /**
+     * Set the gradient color of the sparkline
+     */
+    public void setShader(@ColorInt int gradientColor1, @ColorInt int gradientColor2) {
+        this.gradientColor1 = gradientColor1;
+        this.gradientColor2 = gradientColor2;
     }
 
     /**
      * Get the color of the sparkline
      */
-    @ColorInt public int getLineColor() {
+    public void setCircle(@ColorInt int borderColor, @ColorInt int fillColor) {
+        this.circleBorderColor = borderColor;
+        this.circleFillColor = fillColor;
+    }
+
+    private void setShader(int height) {
+        Shader shader = new LinearGradient(0,
+                0,
+                0,
+                height,
+                gradientColor1,
+                gradientColor2,
+                Shader.TileMode.MIRROR);
+        sparkLinePaint.setShader(shader);
+    }
+
+    /**
+     * Get the color of the sparkline
+     */
+    @ColorInt
+    public int getLineColor() {
         return lineColor;
     }
 
@@ -412,7 +487,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     /**
      * Get the color of the sparkline
      */
-    @ColorInt public int getFillColor() {
+    @ColorInt
+    public int getFillColor() {
         return fillColor;
     }
 
@@ -466,13 +542,16 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
     /**
      * Animator class to animate Spark
+     *
      * @return a {@link SparkAnimator} or null
      */
     public SparkAnimator getSparkAnimator() {
         return sparkAnimator;
     }
+
     /**
      * Animator class to animate Spark
+     *
      * @param sparkAnimator - a {@link SparkAnimator}
      */
     public void setSparkAnimator(SparkAnimator sparkAnimator) {
@@ -563,7 +642,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     }
 
     /**
-    /**
+     * /**
      * Set the {@link Paint} to be used to draw the spark fill. Warning: setting a paint other than
      * the instance returned by {@link #getSparkFillPaint()} may result in loss of style attributes
      * specified on this view.
@@ -580,10 +659,12 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     public Paint getSparkFillPaint() {
         return sparkFillPaint;
     }
+
     /**
      * Get the color of the base line
      */
-    @ColorInt public int getBaseLineColor() {
+    @ColorInt
+    public int getBaseLineColor() {
         return baseLineColor;
     }
 
@@ -633,7 +714,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     /**
      * Get the color of the scrub line
      */
-    @ColorInt public int getScrubLineColor() {
+    @ColorInt
+    public int getScrubLineColor() {
         return scrubLineColor;
     }
 
@@ -715,6 +797,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
     /**
      * Returns a copy of current graphic X points
+     *
      * @return current graphic X points
      */
     public List<Float> getXPoints() {
@@ -723,6 +806,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
     /**
      * Returns a copy of current graphic Y points
+     *
      * @return current graphic Y points
      */
     public List<Float> getYPoints() {
@@ -736,7 +820,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
         pathAnimator = getAnimator();
 
-        if(pathAnimator != null) {
+        if (pathAnimator != null) {
             pathAnimator.start();
         }
 
@@ -744,7 +828,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
     private Animator getAnimator() {
 
-        if(sparkAnimator != null) {
+        if (sparkAnimator != null) {
             return sparkAnimator.getAnimation(this);
         }
 
@@ -859,7 +943,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         if (index >= 0) return index;
 
         // otherwise, calculate the binary search's specified insertion index
-        index = - 1 - index;
+        index = -1 - index;
 
         // if we're inserting at 0, then our guaranteed nearest index is 0
         if (index == 0) return index;
