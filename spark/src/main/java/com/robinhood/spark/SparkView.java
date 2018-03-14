@@ -101,6 +101,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     private int fillColor;
     private float lineWidth;
     private float cornerRadius;
+
+    private float circleRadius;
     @FillType
     private int fillType = FillType.NONE;
     @ColorInt
@@ -184,6 +186,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         scrubEnabled = a.getBoolean(R.styleable.SparkView_spark_scrubEnabled, true);
         scrubLineColor = a.getColor(R.styleable.SparkView_spark_scrubLineColor, baseLineColor);
         scrubLineWidth = a.getDimension(R.styleable.SparkView_spark_scrubLineWidth, lineWidth);
+        circleRadius = a.getDimension(R.styleable.SparkView_spark_circleRadius, 0);
 
         gradientColor1 = a.getColor(R.styleable.SparkView_spark_gradient1Color, 0);
         gradientColor2 = a.getColor(R.styleable.SparkView_spark_gradient2Color, 0);
@@ -400,7 +403,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
     @Override
     public void setPadding(int left, int top, int right, int bottom) {
-        super.setPadding(left + 40, top, right + 40, bottom);
+        super.setPadding(left, top, right, bottom);
         updateContentRect();
         populatePath();
     }
@@ -419,7 +422,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
 
         canvas.drawPath(renderPath, sparkLinePaint);
 
-        if (circleBorderColor != 0 && circleFillColor != 0)
+        if (circleBorderColor != 0 && circleFillColor != 0 && circleRadius != 0)
             drawCircle(canvas, circleBorderColor, circleFillColor);
 
 
@@ -437,11 +440,11 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         borderPaint.setStrokeWidth(12f);
         borderPaint.setColor(borderColor);
 
-        c.drawCircle(xPoints.get(0), yPoints.get(0), 16f, circlePaint);
-        c.drawCircle(xPoints.get(xPoints.size() - 1), yPoints.get(yPoints.size() - 1), 16f, circlePaint);
+        c.drawCircle(xPoints.get(0), yPoints.get(0), circleRadius, circlePaint);
+        c.drawCircle(xPoints.get(xPoints.size() - 1), yPoints.get(yPoints.size() - 1), circleRadius, circlePaint);
 
-        c.drawCircle(xPoints.get(0), yPoints.get(0), 16f, borderPaint);
-        c.drawCircle(xPoints.get(xPoints.size() - 1), yPoints.get(yPoints.size() - 1), 16f, borderPaint);
+        c.drawCircle(xPoints.get(0), yPoints.get(0), circleRadius, borderPaint);
+        c.drawCircle(xPoints.get(xPoints.size() - 1), yPoints.get(yPoints.size() - 1), circleRadius, borderPaint);
     }
 
 
@@ -456,7 +459,8 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
     /**
      * Get the color of the sparkline
      */
-    public void setCircle(@ColorInt int borderColor, @ColorInt int fillColor) {
+    public void setCircle(float circleRadius, @ColorInt int borderColor, @ColorInt int fillColor) {
+        this.circleRadius = circleRadius;
         this.circleBorderColor = borderColor;
         this.circleFillColor = fillColor;
     }

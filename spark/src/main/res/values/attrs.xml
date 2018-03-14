@@ -31,5 +31,6 @@
         <attr name="spark_circleFillColor" format="color|reference" />
         <attr name="spark_gradient1Color" format="color|reference" />
         <attr name="spark_gradient2Color" format="color|reference" />
+        <attr name="spark_circleRadius" format="dimension|reference" />
     </declare-styleable>
 </resources>
