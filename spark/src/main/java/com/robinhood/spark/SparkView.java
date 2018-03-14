@@ -193,6 +193,10 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         circleFillColor = a.getColor(R.styleable.SparkView_spark_circleFillColor, 0);
         circleBorderColor = a.getColor(R.styleable.SparkView_spark_circleBorderColor, 0);
         boolean animateChanges = a.getBoolean(R.styleable.SparkView_spark_animateChanges, false);
+
+        float padding = a.getDimension(R.styleable.SparkView_spark_padding, 0) + circleRadius * 2;
+        setPadding((int) padding, (int) padding, (int) padding, (int) padding);
+
         a.recycle();
 
         sparkLinePaint.setStyle(Paint.Style.STROKE);
@@ -203,6 +207,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         if (cornerRadius != 0) {
             sparkLinePaint.setPathEffect(new CornerPathEffect(cornerRadius));
         }
+
 
         sparkFillPaint.set(sparkLinePaint);
         sparkFillPaint.setColor(fillColor);
@@ -426,18 +431,17 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
             drawCircle(canvas, circleBorderColor, circleFillColor);
 
 
-        setPadding(24, 24, 24, 24);
     }
 
     private void drawCircle(Canvas c, int borderColor, int fillColor) {
         Paint circlePaint = new Paint();
         circlePaint.setStyle(Paint.Style.FILL);
-        circlePaint.setStrokeWidth(24f);
+        circlePaint.setStrokeWidth(circleRadius);
         circlePaint.setColor(fillColor);
 
         Paint borderPaint = new Paint();
         borderPaint.setStyle(Paint.Style.STROKE);
-        borderPaint.setStrokeWidth(12f);
+        borderPaint.setStrokeWidth(circleRadius);
         borderPaint.setColor(borderColor);
 
         c.drawCircle(xPoints.get(0), yPoints.get(0), circleRadius, circlePaint);
