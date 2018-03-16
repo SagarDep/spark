@@ -16,7 +16,6 @@
 
 package com.robinhood.spark.sample;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -49,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new RandomizedAdapter();
         sparkView.setAdapter(adapter);
-        sparkView.setLineWidth(20f);
         sparkView.setScrubListener(new SparkView.OnScrubListener() {
             @Override
             public void onScrubbed(Object value) {

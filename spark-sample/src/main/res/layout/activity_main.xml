@@ -22,7 +22,7 @@
         app:spark_gradient2Color="@color/spark_gradient2"
         app:spark_lineColor="@color/colorAccent"
         app:spark_circleRadius="8dp"
-        app:spark_lineWidth="14dp"
+        app:spark_lineWidth="8dp"
         app:spark_fillColor="@color/colorAccentTransparent"
         app:spark_scrubEnabled="true"/>
 

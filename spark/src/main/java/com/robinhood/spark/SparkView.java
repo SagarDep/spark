@@ -194,7 +194,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         circleBorderColor = a.getColor(R.styleable.SparkView_spark_circleBorderColor, 0);
         boolean animateChanges = a.getBoolean(R.styleable.SparkView_spark_animateChanges, false);
 
-        float padding = a.getDimension(R.styleable.SparkView_spark_padding, 0) + circleRadius * 2;
+        float padding = a.getDimension(R.styleable.SparkView_spark_padding, 0);
         setPadding((int) padding, (int) padding, (int) padding, (int) padding);
 
         a.recycle();
@@ -260,7 +260,7 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
             return;
         }
 
-        scaleHelper = new ScaleHelper(adapter, contentRect, lineWidth, isFillInternal());
+        scaleHelper = new ScaleHelper(adapter, contentRect, lineWidth, circleRadius, isFillInternal());
 
         xPoints.clear();
         yPoints.clear();
@@ -868,17 +868,18 @@ public class SparkView extends View implements ScrubGestureDetector.ScrubListene
         // translates the Y values back into the bounding rect after being scaled
         final float xTranslation, yTranslation;
 
-        public ScaleHelper(SparkAdapter adapter, RectF contentRect, float lineWidth, boolean fill) {
+        public ScaleHelper(SparkAdapter adapter, RectF contentRect, float lineWidth, float circleRadius, boolean fill) {
             final float leftPadding = contentRect.left;
             final float topPadding = contentRect.top;
 
             // subtract lineWidth to offset for 1/2 of the line bleeding out of the content box on
             // either side of the view
-            final float lineWidthOffset = fill ? 0 : lineWidth;
+            final float lineWidthOffset = fill ? 0 : lineWidth + circleRadius * 2;
             this.width = contentRect.width() - lineWidthOffset;
             this.height = contentRect.height() - lineWidthOffset;
 
             this.size = adapter.getCount();
+
 
             // get data bounds from adapter
             RectF bounds = adapter.getDataBounds();
